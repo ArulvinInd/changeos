@@ -118,7 +118,7 @@ function HabitFormModal({
             <select
               value={form.goal_id}
               onChange={(e) => setForm((f) => ({ ...f, goal_id: e.target.value }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
             >
               {goals.map((g) => <option key={g.id} value={g.id}>{g.icon} {g.title}</option>)}
             </select>
@@ -132,7 +132,7 @@ function HabitFormModal({
             <select
               value={form.type}
               onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as HabitType }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
             >
               <option value="binary">Binary (done/not done)</option>
               <option value="measurable">Measurable (numeric)</option>
@@ -144,7 +144,7 @@ function HabitFormModal({
             <select
               value={form.difficulty}
               onChange={(e) => setForm((f) => ({ ...f, difficulty: e.target.value as HabitDifficulty }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
             >
               {(Object.keys(DIFFICULTY_LABEL) as HabitDifficulty[]).map((d) => (
                 <option key={d} value={d}>{DIFFICULTY_LABEL[d]}</option>
@@ -179,7 +179,7 @@ function HabitFormModal({
           <select
             value={form.frequency}
             onChange={(e) => setForm((f) => ({ ...f, frequency: e.target.value as HabitFrequency }))}
-            className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+            className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
           >
             <option value="daily">Daily</option>
             <option value="specific_days">Specific days</option>
@@ -450,6 +450,7 @@ export default function HabitsPage() {
       )}
 
       <HabitFormModal
+        key={editing?.id ?? 'new'}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         initial={editing}

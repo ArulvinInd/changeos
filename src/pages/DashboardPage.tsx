@@ -333,13 +333,13 @@ export default function DashboardPage() {
         >
           <ChevronLeft size={18} aria-hidden />
         </button>
-        <div className="flex gap-1 flex-1 overflow-x-auto pb-1">
+        <div className="grid grid-cols-7 gap-1 flex-1">
           {pastDates.map((d) => (
             <button
               key={d}
               type="button"
               onClick={() => setDate(d)}
-              className={`shrink-0 flex flex-col items-center px-3 py-2 rounded-[var(--radius)] text-[var(--text-xs)] transition-colors min-w-[44px] ${
+              className={`flex flex-col items-center py-2 rounded-[var(--radius)] text-[var(--text-xs)] transition-colors ${
                 d === date
                   ? 'bg-[var(--accent)] text-white'
                   : 'bg-[var(--bg-subtle)] text-[var(--text-muted)] hover:bg-[var(--border)]'

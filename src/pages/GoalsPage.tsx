@@ -112,7 +112,7 @@ function GoalFormModal({
             <select
               value={form.category}
               onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as GoalCategory }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
             >
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
@@ -159,7 +159,7 @@ function GoalFormModal({
             <select
               value={form.status}
               onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as GoalStatus }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
             >
               {(Object.keys(STATUS_LABELS) as GoalStatus[]).map((s) => (
                 <option key={s} value={s}>{STATUS_LABELS[s]}</option>
@@ -336,6 +336,7 @@ export default function GoalsPage() {
       )}
 
       <GoalFormModal
+        key={editing?.id ?? 'new'}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         initial={editing}
