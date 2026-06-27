@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useThemeStore } from '@/store/themeStore'
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { ToastContainer, toast } from '@/components/ui/Toast'
+import { ToastContainer } from '@/components/ui/Toast'
 import { useOfflineDetection } from '@/hooks/useOfflineDetection'
 import { Skeleton } from '@/components/ui/Skeleton'
 
@@ -49,14 +49,10 @@ export default function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
       setLoading(false)
-      // SIGNED_OUT fires on both manual sign-out and on token refresh failure.
-      // Only show the expiry toast when the session was lost unexpectedly (not user-initiated).
+      // SIGNED_OUT fires on both manual sign-out and token refresh failure.
+      // Keep this handler side-effect free to avoid false expiry toasts on explicit sign-out.
       if (event === 'SIGNED_OUT' && !session) {
-        // intentional no-op on explicit sign-out — handled by SettingsPage signOut
-        // toast fires for expiry; ProtectedRoute handles redirect automatically
-      }
-      if (event === 'TOKEN_REFRESH_FAILED') {
-        toast('Your session expired — please sign in again.', 'error')
+        // intentional no-op; ProtectedRoute handles redirect automatically
       }
     })
 
