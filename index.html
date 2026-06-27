@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ChangeOS — your personal habit and routine tracker" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>ChangeOS</title>
+    <script>
+      // Decode the path that 404.html encoded into the query string.
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+        // Also handle the ?p= query param technique used in 404.html
+        var search = location.search;
+        if (search && search.indexOf('?p=') !== -1) {
+          var decoded = search.slice(1).split('&').reduce(function(o, v) {
+            var pair = v.split('='); o[decodeURIComponent(pair[0])] = decodeURIComponent(pair.slice(1).join('='));
+            return o;
+          }, {});
+          if (decoded.p !== undefined) {
+            var path = '/' + decoded.p.replace(/~and~/g, '&');
+            var query = decoded.q ? ('?' + decoded.q.replace(/~and~/g, '&')) : '';
+            history.replaceState(null, null, path + query + location.hash);
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
