@@ -56,7 +56,14 @@ export default function LoginPage() {
 
   async function handleGoogle() {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          // Redirect back to wherever the app is currently hosted —
+          // works for localhost, GitHub Pages, and any custom domain.
+          redirectTo: window.location.origin + import.meta.env.BASE_URL,
+        },
+      })
       if (error) throw error
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Could not sign in with Google'
