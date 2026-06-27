@@ -109,13 +109,20 @@ function GoalFormModal({
         <div className="flex gap-3">
           <div className="flex flex-col gap-1 flex-1">
             <label className="text-[var(--text-sm)] font-medium text-[var(--text)]">Category</label>
-            <select
-              value={form.category}
-              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as GoalCategory }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
-            >
-              {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
+            <div className="relative">
+              <select
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as GoalCategory }))}
+                className="h-10 w-full appearance-none rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-10 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              >
+                {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+              </select>
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)]">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-[var(--text-sm)] font-medium text-[var(--text)]">Icon</label>
@@ -156,15 +163,22 @@ function GoalFormModal({
         {initial && (
           <div className="flex flex-col gap-1">
             <label className="text-[var(--text-sm)] font-medium text-[var(--text)]">Status</label>
-            <select
-              value={form.status}
-              onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as GoalStatus }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
-            >
-              {(Object.keys(STATUS_LABELS) as GoalStatus[]).map((s) => (
-                <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={form.status}
+                onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as GoalStatus }))}
+                className="h-10 w-full appearance-none rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-10 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              >
+                {(Object.keys(STATUS_LABELS) as GoalStatus[]).map((s) => (
+                  <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)]">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
         )}
         <div className="flex justify-end gap-3 mt-2">

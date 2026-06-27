@@ -115,13 +115,20 @@ function HabitFormModal({
               No active goals — <Link to="/goals" className="underline font-medium">create a goal</Link> first.
             </p>
           ) : (
-            <select
-              value={form.goal_id}
-              onChange={(e) => setForm((f) => ({ ...f, goal_id: e.target.value }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
-            >
-              {goals.map((g) => <option key={g.id} value={g.id}>{g.icon} {g.title}</option>)}
-            </select>
+            <div className="relative">
+              <select
+                value={form.goal_id}
+                onChange={(e) => setForm((f) => ({ ...f, goal_id: e.target.value }))}
+                className="h-10 w-full appearance-none rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-10 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              >
+                {goals.map((g) => <option key={g.id} value={g.id}>{g.icon} {g.title}</option>)}
+              </select>
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)]">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
           )}
           {errors.goal_id && <p className="text-[var(--text-xs)] text-red-600">{errors.goal_id}</p>}
         </div>
@@ -129,27 +136,41 @@ function HabitFormModal({
         <div className="flex gap-3">
           <div className="flex flex-col gap-1 flex-1">
             <label className="text-[var(--text-sm)] font-medium text-[var(--text)]">Type</label>
-            <select
-              value={form.type}
-              onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as HabitType }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
-            >
-              <option value="binary">Binary (done/not done)</option>
-              <option value="measurable">Measurable (numeric)</option>
-              <option value="timed">Timed (minutes)</option>
-            </select>
+            <div className="relative">
+              <select
+                value={form.type}
+                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as HabitType }))}
+                className="h-10 w-full appearance-none rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-10 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              >
+                <option value="binary">Binary (done/not done)</option>
+                <option value="measurable">Measurable (numeric)</option>
+                <option value="timed">Timed (minutes)</option>
+              </select>
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)]">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
           <div className="flex flex-col gap-1 flex-1">
             <label className="text-[var(--text-sm)] font-medium text-[var(--text)]">Difficulty</label>
-            <select
-              value={form.difficulty}
-              onChange={(e) => setForm((f) => ({ ...f, difficulty: e.target.value as HabitDifficulty }))}
-              className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
-            >
-              {(Object.keys(DIFFICULTY_LABEL) as HabitDifficulty[]).map((d) => (
-                <option key={d} value={d}>{DIFFICULTY_LABEL[d]}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={form.difficulty}
+                onChange={(e) => setForm((f) => ({ ...f, difficulty: e.target.value as HabitDifficulty }))}
+                className="h-10 w-full appearance-none rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-10 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+              >
+                {(Object.keys(DIFFICULTY_LABEL) as HabitDifficulty[]).map((d) => (
+                  <option key={d} value={d}>{DIFFICULTY_LABEL[d]}</option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)]">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -176,15 +197,22 @@ function HabitFormModal({
 
         <div className="flex flex-col gap-1">
           <label className="text-[var(--text-sm)] font-medium text-[var(--text)]">Frequency</label>
-          <select
-            value={form.frequency}
-            onChange={(e) => setForm((f) => ({ ...f, frequency: e.target.value as HabitFrequency }))}
-            className="h-10 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-8 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
-          >
-            <option value="daily">Daily</option>
-            <option value="specific_days">Specific days</option>
-            <option value="x_per_week">X times per week</option>
-          </select>
+          <div className="relative">
+            <select
+              value={form.frequency}
+              onChange={(e) => setForm((f) => ({ ...f, frequency: e.target.value as HabitFrequency }))}
+              className="h-10 w-full appearance-none rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] px-3 pr-10 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
+            >
+              <option value="daily">Daily</option>
+              <option value="specific_days">Specific days</option>
+              <option value="x_per_week">X times per week</option>
+            </select>
+            <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--text-muted)]">
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
         </div>
 
         {form.frequency === 'specific_days' && (
