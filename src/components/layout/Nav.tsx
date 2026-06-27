@@ -75,15 +75,15 @@ export function BottomNav() {
             <NavLink
               to={to}
               end={to === '/'}
+              aria-label={label}
               className={({ isActive }) =>
                 cn(
-                  'flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] w-full text-[var(--text-xs)] transition-colors',
+                  'flex items-center justify-center min-h-[56px] w-full transition-colors',
                   isActive ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]',
                 )
               }
             >
               <Icon size={20} aria-hidden />
-              <span>{label}</span>
             </NavLink>
           </li>
         ))}
