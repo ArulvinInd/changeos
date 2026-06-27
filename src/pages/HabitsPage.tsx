@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Dumbbell, Edit2, Archive, RotateCcw } from 'lucide-react'
+import { Plus, Dumbbell, Edit2, Archive, ArchiveRestore } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useHabitsStore } from '@/store/habitsStore'
 import { useAuthStore } from '@/store/authStore'
@@ -354,12 +354,15 @@ export default function HabitsPage() {
         <div className="flex gap-2">
           <Button
             variant="secondary"
+            size="sm"
             onClick={() => {
               if (!showArchived) loadArchived()
               setShowArchived((v) => !v)
             }}
+            aria-pressed={showArchived}
           >
-            {showArchived ? 'Active' : 'Archived'}
+            <Archive size={14} aria-hidden />
+            {showArchived ? 'Hide archived' : 'Archived'}
           </Button>
           {!showArchived && (
             <Button onClick={() => { setEditing(undefined); setModalOpen(true) }}>
@@ -371,8 +374,8 @@ export default function HabitsPage() {
 
       {showArchived ? (
         archivedLoading ? (
-          <div className="flex flex-col gap-3">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20" />)}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-40" />)}
           </div>
         ) : archivedHabits.length === 0 ? (
           <div className="flex flex-col items-center gap-4 py-20 text-center">
@@ -380,44 +383,54 @@ export default function HabitsPage() {
             <p className="text-[var(--text-muted)]">No archived habits.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {archivedHabits.map((habit) => {
               const goal = goalMap.get(habit.goal_id)
               return (
                 <article
                   key={habit.id}
-                  className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 flex items-center gap-4 opacity-60"
+                  className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-sm)] flex flex-col gap-3 opacity-60"
                 >
-                  {goal && (
-                    <span
-                      className="flex items-center justify-center w-9 h-9 rounded-[var(--radius)] text-lg shrink-0"
-                      style={{ backgroundColor: goal.color + '22' }}
-                    >
-                      {goal.icon}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {goal && (
+                        <span
+                          className="flex items-center justify-center w-9 h-9 rounded-[var(--radius)] text-xl shrink-0"
+                          style={{ backgroundColor: goal.color + '22' }}
+                        >
+                          {goal.icon}
+                        </span>
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-semibold text-[var(--text)] truncate">{habit.title}</p>
+                        <p className="text-[var(--text-xs)] text-[var(--text-muted)]">{habit.type} · {habit.frequency.replace('_', ' ')}</p>
+                      </div>
+                    </div>
+                    <span className={`shrink-0 text-[var(--text-xs)] px-2 py-0.5 rounded-full font-medium ${DIFFICULTY_COLOR[habit.difficulty]}`}>
+                      {DIFFICULTY_LABEL[habit.difficulty]}
                     </span>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[var(--text)] truncate">{habit.title}</p>
-                    <p className="text-[var(--text-xs)] text-[var(--text-muted)]">
-                      {goal?.title ?? 'No goal'} · {habit.type} · {habit.frequency.replace('_', ' ')}
-                    </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => restoreHabit(habit)}
-                    aria-label={`Restore ${habit.title}`}
-                  >
-                    <RotateCcw size={14} aria-hidden />
-                  </Button>
+                  {goal && (
+                    <p className="text-[var(--text-sm)] text-[var(--text-muted)] line-clamp-2">{goal.title}</p>
+                  )}
+                  <div className="flex gap-2 mt-auto pt-2 border-t border-[var(--border)]">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => restoreHabit(habit)}
+                      aria-label={`Restore ${habit.title}`}
+                    >
+                      <ArchiveRestore size={14} aria-hidden /> Restore
+                    </Button>
+                  </div>
                 </article>
               )
             })}
           </div>
         )
       ) : loading ? (
-        <div className="flex flex-col gap-3">
-          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20" />)}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-40" />)}
         </div>
       ) : habits.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
@@ -428,39 +441,44 @@ export default function HabitsPage() {
           </Button>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {habits.map((habit) => {
             const goal = goalMap.get(habit.goal_id)
             return (
               <article
                 key={habit.id}
-                className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 flex items-center gap-4"
+                className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-sm)] flex flex-col gap-3"
               >
-                {goal && (
-                  <span
-                    className="flex items-center justify-center w-9 h-9 rounded-[var(--radius)] text-lg shrink-0"
-                    style={{ backgroundColor: goal.color + '22' }}
-                  >
-                    {goal.icon}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {goal && (
+                      <span
+                        className="flex items-center justify-center w-9 h-9 rounded-[var(--radius)] text-xl shrink-0"
+                        style={{ backgroundColor: goal.color + '22' }}
+                      >
+                        {goal.icon}
+                      </span>
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-semibold text-[var(--text)] truncate">{habit.title}</p>
+                      <p className="text-[var(--text-xs)] text-[var(--text-muted)]">{habit.type} · {habit.frequency.replace('_', ' ')}</p>
+                    </div>
+                  </div>
+                  <span className={`shrink-0 text-[var(--text-xs)] px-2 py-0.5 rounded-full font-medium ${DIFFICULTY_COLOR[habit.difficulty]}`}>
+                    {DIFFICULTY_LABEL[habit.difficulty]}
                   </span>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-[var(--text)] truncate">{habit.title}</p>
-                  <p className="text-[var(--text-xs)] text-[var(--text-muted)]">
-                    {goal?.title ?? 'No goal'} · {habit.type} · {habit.frequency.replace('_', ' ')}
-                  </p>
                 </div>
-                <span className={`shrink-0 text-[var(--text-xs)] px-2 py-0.5 rounded-full font-medium ${DIFFICULTY_COLOR[habit.difficulty]}`}>
-                  {DIFFICULTY_LABEL[habit.difficulty]}
-                </span>
-                <div className="flex gap-1 shrink-0">
+                {goal && (
+                  <p className="text-[var(--text-sm)] text-[var(--text-muted)] line-clamp-2">{goal.title}</p>
+                )}
+                <div className="flex gap-2 mt-auto pt-2 border-t border-[var(--border)]">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => { setEditing(habit); setModalOpen(true) }}
                     aria-label={`Edit ${habit.title}`}
                   >
-                    <Edit2 size={14} aria-hidden />
+                    <Edit2 size={14} aria-hidden /> Edit
                   </Button>
                   <Button
                     variant="ghost"
@@ -468,7 +486,7 @@ export default function HabitsPage() {
                     onClick={() => archiveHabit(habit)}
                     aria-label={`Archive ${habit.title}`}
                   >
-                    <Archive size={14} aria-hidden />
+                    <Archive size={14} aria-hidden /> Archive
                   </Button>
                 </div>
               </article>
