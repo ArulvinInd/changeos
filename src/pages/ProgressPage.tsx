@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, memo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid,
@@ -12,8 +12,9 @@ import { toast } from '@/components/ui/Toast'
 import { toLocalDate } from '@/lib/utils'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 import type { HabitLog, Habit, Streak } from '@/types'
+import { useThemeStore } from '@/store/themeStore'
 
-function HeatmapCalendar({ logs }: { logs: HabitLog[] }) {
+const HeatmapCalendar = memo(function HeatmapCalendar({ logs }: { logs: HabitLog[] }) {
   const today = new Date()
   const start = subDays(today, 90)
   const days = eachDayOfInterval({ start, end: today })
@@ -55,7 +56,7 @@ function HeatmapCalendar({ logs }: { logs: HabitLog[] }) {
       </div>
     </div>
   )
-}
+})
 
 export default function ProgressPage() {
   useDocumentTitle('Progress')
@@ -102,36 +103,54 @@ export default function ProgressPage() {
       })
   }, [user])
 
-  // Weekly bar chart data — completions per day last 7 days
-  const weeklyData = Array.from({ length: 7 }, (_, i) => {
-    const day = subDays(new Date(), 6 - i)
-    const key = toLocalDate(day)
-    return {
-      day: format(day, 'EEE'),
-      completed: logs.filter((l) => l.log_date === key && l.completed).length,
+  // Build a date-keyed lookup once per logs change — avoids O(n) filter per chart day
+  const logIndex = useMemo(() => {
+    const m = new Map<string, { total: number; completed: number }>()
+    for (const log of logs) {
+      const entry = m.get(log.log_date) ?? { total: 0, completed: 0 }
+      entry.total++
+      if (log.completed) entry.completed++
+      m.set(log.log_date, entry)
     }
-  })
+    return m
+  }, [logs])
+
+  // Weekly bar chart data — completions per day last 7 days
+  const weeklyData = useMemo(() =>
+    Array.from({ length: 7 }, (_, i) => {
+      const day = subDays(new Date(), 6 - i)
+      const key = toLocalDate(day)
+      return { day: format(day, 'EEE'), completed: logIndex.get(key)?.completed ?? 0 }
+    }), [logIndex])
 
   // Monthly trend — daily completion % over last 30 days
-  const monthlyData = Array.from({ length: 30 }, (_, i) => {
-    const day = subDays(new Date(), 29 - i)
-    const key = toLocalDate(day)
-    const dayLogs = logs.filter((l) => l.log_date === key)
-    const pct = dayLogs.length > 0 ? Math.round((dayLogs.filter((l) => l.completed).length / dayLogs.length) * 100) : 0
-    return { date: format(day, 'MMM d'), pct }
-  })
+  const monthlyData = useMemo(() =>
+    Array.from({ length: 30 }, (_, i) => {
+      const day = subDays(new Date(), 29 - i)
+      const key = toLocalDate(day)
+      const entry = logIndex.get(key)
+      const pct = entry && entry.total > 0 ? Math.round((entry.completed / entry.total) * 100) : 0
+      return { date: format(day, 'MMM d'), pct }
+    }), [logIndex])
 
-  // Summary stats
-  const totalCompleted = logs.filter((l) => l.completed).length
-  const activeStreaks = streaks.filter((s) => s.current_streak > 0).length
-  const bestStreak = Math.max(...streaks.map((s) => s.longest_streak), 0)
-  const thisWeekDone = weeklyData.reduce((sum, d) => sum + d.completed, 0)
-  const lastWeekDone = Array.from({ length: 7 }, (_, i) => {
-    const key = toLocalDate(subDays(new Date(), 7 + 6 - i))
-    return logs.filter((l) => l.log_date === key && l.completed).length
-  }).reduce((a, b) => a + b, 0)
+  // Summary stats — single pass through the index
+  const { totalCompleted, thisWeekDone, lastWeekDone } = useMemo(() => {
+    let total = 0
+    let thisWeek = 0
+    let lastWeek = 0
+    for (const entry of logIndex.values()) total += entry.completed
+    for (let i = 0; i < 7; i++) thisWeek += logIndex.get(toLocalDate(subDays(new Date(), i)))?.completed ?? 0
+    for (let i = 7; i < 14; i++) lastWeek += logIndex.get(toLocalDate(subDays(new Date(), i)))?.completed ?? 0
+    return { totalCompleted: total, thisWeekDone: thisWeek, lastWeekDone: lastWeek }
+  }, [logIndex])
 
-  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1'
+  const { activeStreaks, bestStreak } = useMemo(() => ({
+    activeStreaks: streaks.filter((s) => s.current_streak > 0).length,
+    bestStreak: streaks.reduce((m, s) => Math.max(m, s.longest_streak), 0),
+  }), [streaks])
+
+  // Read accent from store — avoids a synchronous getComputedStyle forced reflow on every render
+  const { accent } = useThemeStore()
 
   return (
     <section className="p-4 sm:p-6 max-w-4xl mx-auto flex flex-col gap-8">
