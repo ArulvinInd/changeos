@@ -37,8 +37,6 @@ export const useThemeStore = create<ThemeState>()(
       name: 'changeos-theme',
       // ponytail: Safari private mode throws SecurityError on any localStorage write.
       // Ceiling: in-memory fallback means theme resets on page reload in private mode — acceptable.
-      // ponytail: Safari private mode throws SecurityError on any localStorage write.
-      // Ceiling: in-memory fallback means theme resets on page reload in private mode — acceptable.
       storage: {
         getItem: (key) => { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : null } catch { return null } },
         setItem: (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)) } catch { /* private mode */ } },
