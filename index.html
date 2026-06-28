@@ -3,8 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover: exposes safe-area-inset-* CSS env vars for notch / home-indicator -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="ChangeOS — your personal habit and routine tracker" />
+    <!-- iOS PWA: without these, "Add to Home Screen" opens in Safari and uses a screenshot icon -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ChangeOS" />
+    <link rel="apple-touch-icon" href="/pwa-192.png" />
+    <!-- Theme FOUC fix: apply persisted theme before React mounts to avoid white flash in dark mode -->
+    <script>
+      try {
+        var t = JSON.parse(localStorage.getItem('changeos-theme') || '{}').state?.theme
+        if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
+        else if (t === 'light') document.documentElement.setAttribute('data-theme', 'light')
+      } catch (_) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />

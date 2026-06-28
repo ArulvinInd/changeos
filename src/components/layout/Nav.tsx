@@ -68,6 +68,7 @@ export function BottomNav() {
     <nav
       aria-label="Main navigation"
       className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)] bg-[var(--surface)]"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="flex" role="list">
         {mobileItems.map(({ to, icon: Icon, label }) => (

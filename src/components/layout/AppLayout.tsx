@@ -12,7 +12,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
       <Sidebar />
-      <main id="main-content" className="flex-1 min-w-0 pb-16 lg:pb-0">
+      <main id="main-content" className="flex-1 min-w-0 pb-16 lg:pb-0" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}>
         {children}
       </main>
       <BottomNav />

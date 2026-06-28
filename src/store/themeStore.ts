@@ -33,6 +33,15 @@ export const useThemeStore = create<ThemeState>()(
         set({ accent })
       },
     }),
-    { name: 'changeos-theme' },
+    {
+      name: 'changeos-theme',
+      // ponytail: Safari private mode throws SecurityError on any localStorage write.
+      // Ceiling: in-memory fallback means theme resets on page reload in private mode — acceptable.
+      storage: {
+        getItem: (key) => { try { return localStorage.getItem(key) } catch { return null } },
+        setItem: (key, val) => { try { localStorage.setItem(key, val) } catch { /* private mode */ } },
+        removeItem: (key) => { try { localStorage.removeItem(key) } catch { /* private mode */ } },
+      },
+    },
   ),
 )

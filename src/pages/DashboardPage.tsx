@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Flame, CheckCircle, Circle, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Flame, CheckCircle, Circle, Plus, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useHabitsStore } from '@/store/habitsStore'
 import { useAuthStore } from '@/store/authStore'
@@ -94,9 +94,12 @@ function HabitCheckCard({
         <p className={`font-medium truncate ${completed ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text)]'}`}>
           {habit.title}
         </p>
+        {habit.why && (
+          <p className="text-[var(--text-xs)] text-[var(--text-muted)] italic mt-0.5 truncate">{habit.why}</p>
+        )}
         <div className="flex items-center gap-2 mt-0.5">
           <StreakBadge streak={streak?.current_streak ?? 0} />
-          {habit.type === 'measurable' && habit.target_value && (
+          {(habit.type === 'measurable' || habit.type === 'timed') && habit.target_value && (
             <span className="text-[var(--text-xs)] text-[var(--text-muted)]">
               Target: {habit.target_value}{habit.unit ? ` ${habit.unit}` : ''}
             </span>
@@ -120,7 +123,7 @@ function HabitCheckCard({
                 type="number"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
-                placeholder={`Enter ${habit.unit || 'value'}`}
+                placeholder={`Enter ${habit.unit || (habit.type === 'timed' ? 'min' : 'value')}`}
                 autoFocus
                 className="h-8 w-32 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg)] px-2 text-[var(--text)] text-[var(--text-sm)] focus:outline-2 focus:outline-[var(--accent)]"
                 onKeyDown={(e) => { if (e.key === 'Enter') handleMeasurable() }}
@@ -371,11 +374,25 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-3">
           {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-20" />)}
         </div>
+      ) : habits.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+          <Sparkles size={48} className="text-[var(--text-muted)]" aria-hidden />
+          <h2 className="text-[var(--text-lg)] font-semibold text-[var(--text)]">Welcome to ChangeOS</h2>
+          <p className="text-[var(--text-muted)] max-w-xs">Start by creating a goal, then add habits to track every day.</p>
+          <div className="flex gap-3 flex-wrap justify-center">
+            <Button onClick={() => navigate('/goals')}>
+              <Plus size={16} aria-hidden /> Create a Goal
+            </Button>
+            <Button variant="secondary" onClick={() => navigate('/habits')}>
+              <Plus size={16} aria-hidden /> Add a Habit
+            </Button>
+          </div>
+        </div>
       ) : todayHabits.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
           <CheckCircle size={48} className="text-[var(--text-muted)]" aria-hidden />
           <p className="text-[var(--text-muted)]">No habits scheduled for today.</p>
-          <Button onClick={() => navigate('/habits')}>
+          <Button variant="secondary" onClick={() => navigate('/habits')}>
             <Plus size={16} aria-hidden /> Add Habit
           </Button>
         </div>

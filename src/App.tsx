@@ -6,6 +6,7 @@ import { useThemeStore } from '@/store/themeStore'
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ToastContainer } from '@/components/ui/Toast'
+import { PWAUpdateBanner } from '@/components/ui/PWAUpdateBanner'
 import { useOfflineDetection } from '@/hooks/useOfflineDetection'
 import { Skeleton } from '@/components/ui/Skeleton'
 
@@ -81,6 +82,7 @@ export default function App() {
         </Routes>
       </Suspense>
       <ToastContainer />
+      <PWAUpdateBanner />
     </BrowserRouter>
   )
 }
