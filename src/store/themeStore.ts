@@ -38,8 +38,8 @@ export const useThemeStore = create<ThemeState>()(
       // ponytail: Safari private mode throws SecurityError on any localStorage write.
       // Ceiling: in-memory fallback means theme resets on page reload in private mode — acceptable.
       storage: {
-        getItem: (key) => { try { return localStorage.getItem(key) } catch { return null } },
-        setItem: (key, val) => { try { localStorage.setItem(key, val) } catch { /* private mode */ } },
+        getItem: (key) => { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : null } catch { return null } },
+        setItem: (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)) } catch { /* private mode */ } },
         removeItem: (key) => { try { localStorage.removeItem(key) } catch { /* private mode */ } },
       },
     },
