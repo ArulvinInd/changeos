@@ -170,6 +170,20 @@ export default function DashboardPage() {
   const { user } = useAuthStore()
   const { goals, habits, todayLogs, streaks, setGoals, setHabits, setTodayLogs, setStreaks, upsertLog } = useHabitsStore()
   const [loading, setLoading] = useState(true)
+  const [displayName, setDisplayName] = useState('')
+
+  useEffect(() => {
+    if (!user) return
+    supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => {
+        setDisplayName(data?.display_name ?? user.email?.split('@')[0] ?? '')
+      })
+  }, [user])
+
   const [date, setDate] = useState(toLocalDate())
   const [weekOffset, setWeekOffset] = useState(0) // 0 = ends today, -7 = previous week, etc.
   const navigate = useNavigate()
@@ -304,6 +318,9 @@ export default function DashboardPage() {
     <section className="p-4 sm:p-6 max-w-2xl mx-auto">
       {/* Header */}
       <div className="mb-6">
+        {displayName && (
+          <p className="text-[var(--text-muted)] text-[var(--text-sm)] mb-1">Hello, {displayName}!</p>
+        )}
         <h1 className="text-[var(--text-2xl)] font-bold text-[var(--text)]">
           {format(new Date(date + 'T12:00:00'), 'EEEE, MMM d')}
         </h1>
